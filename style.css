@@ -1,0 +1,18 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    outline: none;
+    text-decoration: none;
+}
+
+form.main-form {
+    width: 400px;
+}
+
+div.container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
