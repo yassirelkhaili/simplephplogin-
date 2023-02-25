@@ -6,11 +6,11 @@
     text-decoration: none;
 }
 
-form.main-form {
+.main-form {
     width: 400px;
 }
 
-div.container {
+.container {
     height: 100vh;
     display: flex;
     justify-content: center;
