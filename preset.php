@@ -12,21 +12,22 @@ $mail = new PHPMailer(true);
     <div class="card">
     <div class="card-header">
 <?php if (!isset($_POST["submitemail"])): ?>
-    <h2 id="title">Veuillez Saisir Votre Adresse E-mail</h2>
+    <h2 id="title">Enter Your Email Address</h2>
         </div>
         <div class="card-body">
     <form class="main-form" method="post" action="preset.php">
   <div class="mb-3" id="email-section">
-    <label for="exampleInputEmail1" class="form-label">Adresse Email:</label>
+    <label for="exampleInputEmail1" class="form-label">Email Address:</label>
     <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email" required>
   </div>
-  <button type="submit" class="btn btn-danger" name="submitemail">Envoyer</button>
+  <button type="submit" class="btn btn-danger" name="submitemail">Send</button>
 </form>
 <?php else: ?>
   <?php $recoveryEmail = $_POST["email"]; ?>
   <?php foreach($users as $user): ?>
-      <?php if($user->email === $recoveryEmail): ?>
-        <?php 
+    <?php if ($user->email === $recoveryEmail): ?>
+      <?php echo "send email"; ?>
+      <?php 
         foreach ($users as $user) {
           $S_code = rand(999, 9999999); 
           while($S_code === $user->S_code) {
@@ -36,8 +37,8 @@ $mail = new PHPMailer(true);
         $sql = "UPDATE users SET S_code=:S_code WHERE email=:recoveryEmail"; 
         $stmt = $conn->prepare($sql);
         $stmt->execute([":S_code" => $S_code, ":recoveryEmail" => $recoveryEmail]); 
-        $subject = "Votre code Personel"; 
-        $body = "Votre code Personel est: " . $S_code . "<br></br><strong>Important: ne partagez ce code avec personne, veuillez supprimez cet e-mail après utilisation</strong>"; 
+        $subject = "Your Personal Access Code"; 
+        $body = "Your Personal Code Is: " . $S_code . "<br></br><strong>Important: Don't Share This Code With Anyone, Delete This Email After Use.</strong>"; 
         try {
           //Server settings                  
           $mail->isSMTP();                                            
@@ -57,20 +58,21 @@ $mail = new PHPMailer(true);
           $mail->Body    = $body;
           //Send email 
           $mail->send();
-          echo "<h5>Votre Code personel à été envoyé par email</h5>";
+          echo "<h5>Your Personal Access Code Was Send By Email</h5>";
       } catch (Exception $e) {
-          echo "Votre Code personel na pas été envoyé par email Erreur: {$mail->ErrorInfo}";
+          echo "We Were Unable To Send You A Verification Code Error: {$mail->ErrorInfo}";
       }  
       //Close smtp connection
       $mail->smtpClose(); 
           ?>
           <?php header("location: verify.php"); ?>
 <?php exit; ?>
-<?php else: ?>
-  <h2 id="title">Adresse Email Erroné</h2>
+      <?php endif; ?>
+<?php endforeach; ?>
+<h2 id="title">Wrong Email Address</h2>
         </div>
         <div style="display: flex; justify-content: center; padding: 10px;">
-  <button type="button" class="btn btn-danger" name="return" style="max-width:fit-content;" data-btn>Retour à La Page D'accueil</button>
+  <button type="button" class="btn btn-danger" name="return" style="max-width:fit-content;" data-btn>Return To Login Page</button>
   </div>
 </form>
 <script>
@@ -79,9 +81,6 @@ $mail = new PHPMailer(true);
     document.location.href="index.php"; 
   })
 </script>
-<?php exit; ?>
-<?php endif; ?>
-<?php endforeach; ?>
     <?php endif; ?>
 </div>
 </div>

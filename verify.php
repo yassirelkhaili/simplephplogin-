@@ -2,7 +2,7 @@
 <div class="container">
     <div class="card">
     <div class="card-header">
-<h2 id="title">Veuillez Vérifier Votre Boîte De Réception</h2>
+<h2 id="title">Please Check your inbox</h2>
         </div>
         <div class="card-body">
     <form class="main-form" method="post" action="pword.php">
@@ -12,9 +12,9 @@
   </div>
   <?php if(isset($_GET["badcode"])): ?>
         <p class="alert alert-danger" role="alert" style="padding: 8px;">
-        Code Erroné: Veuillez Vérifier Votre Code.
+        Wrong Input: Please Verify Your Code.
         </p>
         <?php endif; ?>
-  <button type="submit" class="btn btn-danger" name="submitcode">Envoyer</button>
+  <button type="submit" class="btn btn-danger" name="submitcode">Send</button>
 </form>
 <?php require "footer.php"; ?>
