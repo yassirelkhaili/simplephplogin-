@@ -4,9 +4,9 @@ require "header.php";
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
-
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 $mail = new PHPMailer(true); 
-
 ?>
 <div class="container">
     <div class="card">
@@ -20,13 +20,33 @@ $mail = new PHPMailer(true);
     <label for="exampleInputEmail1" class="form-label">Email Address:</label>
     <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email" required>
   </div>
-  <button type="submit" class="btn btn-danger" name="submitemail">Send</button>
+  <div class="g-recaptcha" data-sitekey="6Ld7gLskAAAAANWsoYJAYOmlre6vdovag2usDJ53"></div>
+  <button type="submit" class="btn btn-danger" name="submitemail" value="submit">Send</button>
 </form>
 <?php else: ?>
-  <?php $recoveryEmail = $_POST["email"]; ?>
+  <?php $recoveryEmail = $_POST["email"]; 
+  $recaptcha_secret_key = $_ENV["CAPTCHA_KEY"];
+  $recaptcha_response = $_POST['g-recaptcha-response'];
+  $verify_response = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$recaptcha_secret_key.'&response='.$recaptcha_response);
+  $response_data = json_decode($verify_response);
+  ?>
+  <?php if(!$response_data->success): ?>
+    <h2 id="title">Captcha Submission Failed</h2>
+        </div>
+        <div style="display: flex; justify-content: center; padding: 10px;">
+  <button type="button" class="btn btn-danger" name="return" style="max-width:fit-content;" data-captchaBtn>Back To Home Page</button>
+  </div>
+</form>
+<script>
+  const captchaBtn = document.querySelector("[data-captchaBtn]")
+  captchaBtn.addEventListener("click", () => {
+    document.location.href="index.php"; 
+  })
+</script>
+        <?php exit; ?>
+        <?php endif; ?>
   <?php foreach($users as $user): ?>
     <?php if ($user->email === $recoveryEmail): ?>
-      <?php echo "send email"; ?>
       <?php 
         foreach ($users as $user) {
           $S_code = rand(999, 9999999); 
@@ -40,16 +60,18 @@ $mail = new PHPMailer(true);
         $subject = "Your Personal Access Code"; 
         $body = "Your Personal Code Is: " . $S_code . "<br></br><strong>Important: Don't Share This Code With Anyone, Delete This Email After Use.</strong>"; 
         try {
-          //Server settings                  
+          //Server settings    
+          $name = $_ENV["EMAIL_NAME"];
+          $key = $_ENV["EMAIL_KEY"];               
           $mail->isSMTP();                                            
           $mail->Host       = 'smtp.gmail.com';                     
           $mail->SMTPAuth   = true;                                   
-          $mail->Username   = 'yassirelk3@gmail.com';                     
-          $mail->Password   = 'rbekzsfxsrfzcygw';                               
+          $mail->Username   = $name;                     
+          $mail->Password   = $key;                               
           $mail->SMTPSecure = 'tls';            
           $mail->Port       = 587;    
           //Sender 
-          $mail->setFrom('yassirelk3@gmail.com');                                  
+          $mail->setFrom($name);                                  
           //Recipients
           $mail->addAddress($recoveryEmail);           
           //Content             
